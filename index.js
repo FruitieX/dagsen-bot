@@ -1,8 +1,9 @@
 var fs = require('fs');
-var token = fs.readFileSync(process.env.HOME + '/.dagsen-bot-token');
+var token = require(process.env.HOME + '/.dagsen-bot-token.js');
+
 var request = require('request');
 var Telegram = require('telegram-bot');
-var tg = new Telegram();
+var tg = new Telegram(token);
 
 tg.on('message', function(msg) {
   if (!msg.text) return;
@@ -12,7 +13,6 @@ tg.on('message', function(msg) {
       console.log(body);
       tg.sendMessage({
         text: body,
-        reply_to_message_id: msg.message_id,
         chat_id: msg.chat.id
       });
     });
