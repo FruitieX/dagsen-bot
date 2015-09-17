@@ -6,11 +6,12 @@ var Telegram = require('telegram-bot');
 var tg = new Telegram(token);
 
 tg.on('message', function(msg) {
+  console.log('got msg: ' + msg.text);
   if (!msg.text) return;
 
-  if (msg.text === '/mat' || msg.text === '/dagsen') {
+  if (!msg.text.indexOf('/mat')) {
+    console.log('retreiving menu...');
     request('http://api.teknolog.fi/taffa/sv/today', function(err, res, body) {
-      console.log(body);
       tg.sendMessage({
         text: body,
         chat_id: msg.chat.id
