@@ -26,7 +26,7 @@ tg.on('message', function(msg) {
       message = "Temperatur: " + outside["gent-outside-t"] + " \xB0C\n";
       message += "Luftfuktighet: " + outside["gent-outside-h"] + " RH%\n";
       message += "Lufttryck: " + outside["gent-outside-b"] + " hPa\n";
-      message += "Ljusstyrka: "  + outside["gent-outside-l"] + " lx\n";
+      message += "Illuminans: "  + outside["gent-outside-l"] + " lx\n";
       tg.sendMessage({
         text: message,
         chat_id: msg.chat.id
