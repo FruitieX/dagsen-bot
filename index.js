@@ -17,9 +17,7 @@ tg.on('message', function(msg) {
         chat_id: msg.chat.id
       });
     });
-  }
-
-  if (!msg.text.indexOf('/ute')) {
+  } else if (!msg.text.indexOf('/ute')) {
     console.log('retreiving weather...');
     request('http://outside.aalto.fi/data.txt', function(err, res, body) {
       outside = JSON.parse(body);
@@ -31,6 +29,11 @@ tg.on('message', function(msg) {
         text: message,
         chat_id: msg.chat.id
       });
+    });
+  } else if (!msg.text.indexOf('/fredag')) {
+    tg.sendMessage({
+      text: new Date().getDay() === 5 ? 'IT\'S FRIDAY!' : 'Nope.',
+      chat_id: msg.chat.id
     });
   }
 });
