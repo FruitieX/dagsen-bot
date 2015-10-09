@@ -35,6 +35,11 @@ tg.on('message', function(msg) {
       text: new Date().getDay() === 5 ? 'IT\'S FRIDAY!' : 'Nope.',
       chat_id: msg.chat.id
     });
+  } else if (!msg.text.indexOf('/onsdag') || !msg.text.indexOf('/tulttan')) {
+    tg.sendMessage({
+      text: new Date().getDay() === 3 ? 'Ja, det är onsdag.' : 'Nope.',
+      chat_id: msg.chat.id
+    });
   }
 });
 
