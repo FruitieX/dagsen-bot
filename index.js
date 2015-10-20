@@ -61,6 +61,35 @@ tg.on('message', function(msg) {
     } catch(e) {
       console.log('no music list found! add one to ~/.dagsen-bot-music.json');
     }
+  } else if (!msg.text.indexOf('/addmusic')) {
+    fs.readFile(process.env.HOME + '/.dagsen-bot-music.json', function(err, songs) {
+      if (err) {
+        console.log(err);
+        return;
+      }
+
+      songs = JSON.parse(songs);
+
+      var url = msg.text.split(' ');
+      url.shift();
+      url = url.join(' ');
+
+      if (url.match(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/)) {
+        songs.push(url);
+
+        fs.writeFile(process.env.HOME + '/.dagsen-bot-music.json', JSON.stringify(songs), function(err) {
+          if (err) {
+            console.log(err);
+            return;
+          }
+
+          tg.sendMessage({
+            text: 'Song added!',
+            chat_id: msg.chat.id
+          });
+        });
+      }
+    });
   }
 });
 
