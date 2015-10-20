@@ -41,19 +41,19 @@ tg.on('message', function(msg) {
       chat_id: msg.chat.id
     });
   } else if (!msg.text.indexOf('/music')) {
-	var music_list = fs.readFile('./music.json', function(e, data) {
-	  if (e) {
-		console.log(e);
-		return;
-	  }
-	  data = JSON.parse(data);
-	  var r = Math.floor(Math.random() * data.length); // Choosing a random item from the URL list
-	  var video_url = data[r];
-	  tg.sendMessage({
-	    text: video_url,
-	    chat_id: msg.chat.id
-	  });
-	});
+    var music_list = fs.readFile('./music.json', function(e, data) {
+      if (e) {
+        console.log(e);
+        return;
+      }
+      data = JSON.parse(data);
+      var r = Math.floor(Math.random() * data.length); // Choosing a random item from the URL list
+      var video_url = data[r];
+      tg.sendMessage({
+        text: video_url,
+        chat_id: msg.chat.id
+      });
+    });
   }
 });
 
