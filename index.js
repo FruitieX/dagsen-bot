@@ -32,6 +32,19 @@ tg.on('message', function(msg) {
         chat_id: msg.chat.id
       });
     });
+  } else if(!msg.text.indexOf('/inne')) {
+    console.log('retrieving inside weather...');
+    request('http://nodemcu.jiihon.com/inne', function(err, res, body) {
+      inside = JSON.parse(body);
+
+      message = 'Temperatur: ' + Number(inside['temperature']).toFixed(1).replace('.',',') + ' \xB0C\n';
+      message += 'Luftfuktighet: '  + Number(inside['humidity']).toFixed(0).replace('.', ',') + ' RH%\n';
+
+      tg.sendMessage({
+        text: message,
+        chat_id: msg.chat.id
+      });
+    })
   } else if (!msg.text.indexOf('/fredag')) {
     tg.sendMessage({
       text: new Date().getDay() === 5 ? 'IT\'S FRIDAY!' : 'Nope.',
