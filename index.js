@@ -39,6 +39,12 @@ tg.on('message', function(msg) {
 
       message = 'Temperatur: ' + Number(inside['temperature']).toFixed(1).replace('.',',') + ' \xB0C\n';
       message += 'Luftfuktighet: '  + Number(inside['humidity']).toFixed(0).replace('.', ',') + ' RH%\n';
+      message += 'Ljust: '
+      if(inside['brightness-raw']<=17) {
+        message += 'nej'; }
+      else {
+        message += 'ja' }
+
 
       tg.sendMessage({
         text: message,
