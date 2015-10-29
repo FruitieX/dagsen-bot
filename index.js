@@ -6,11 +6,11 @@ var Telegram = require('telegram-bot');
 var tg = new Telegram(token);
 
 tg.on('message', function(msg) {
-  console.log('got msg: ' + msg.text);
   if (!msg.text) return;
 
   if (!msg.text.indexOf('/mat')) {
     console.log('retreiving menu...');
+
     request('http://api.teknolog.fi/taffa/sv/today', function(err, res, body) {
       tg.sendMessage({
         text: body,
@@ -20,16 +20,44 @@ tg.on('message', function(msg) {
   } else if (!msg.text.indexOf('/ute')) {
     console.log('retreiving weather...');
     request('http://outside.aalto.fi/data.txt', function(err, res, body) {
-      outside = JSON.parse(body);
-      message = 'Temperatur: ' + Number(outside['gent-outside-t']).toFixed(1).replace('.', ',') + ' \xB0C\n';
-      message += 'Luftfuktighet: ' + Number(outside['gent-outside-h']).toFixed(0).replace('.', ',') + ' RH%\n';
-      message += 'Lufttryck: ' + Number(outside['gent-outside-b']).toFixed(0).replace('.', ',') + ' hPa\n';
-      message += 'Illuminans: '  + Number(outside['gent-outside-l']).toFixed(0).replace('.', ',') + ' lx\n';
+      try {
+        outside = JSON.parse(body);
+
+        message = 'Temperatur: ' + Number(outside['gent-outside-t']).toFixed(1).replace('.', ',') + ' \xB0C\n';
+        message += 'Luftfuktighet: ' + Number(outside['gent-outside-h']).toFixed(0).replace('.', ',') + ' RH%\n';
+        message += 'Lufttryck: ' + Number(outside['gent-outside-b']).toFixed(0).replace('.', ',') + ' hPa\n';
+        message += 'Illuminans: '  + Number(outside['gent-outside-l']).toFixed(0).replace('.', ',') + ' lx\n';
+      } catch(err) {
+        message = "Vädersensorn är tyvärr offline för tillfället."
+      }
+
       tg.sendMessage({
         text: message,
         chat_id: msg.chat.id
       });
     });
+  } else if(!msg.text.indexOf('/inne')) {
+    console.log('retrieving inside weather...');
+    request('http://nodemcu.jiihon.com/inne', function(err, res, body) {
+      try {
+        inside = JSON.parse(body);
+
+        message = 'Temperatur: ' + Number(inside['temperature']).toFixed(1).replace('.',',') + ' \xB0C\n';
+        message += 'Luftfuktighet: '  + Number(inside['humidity']).toFixed(0).replace('.', ',') + ' RH%\n';
+        message += 'Ljust: '
+        if(inside['brightness-raw']<=17) {
+          message += 'nej'; }
+        else {
+          message += 'ja' }
+      } catch(err) {
+        message = "Klimatsensorn är tyvärr offline för tillfället."
+      }
+
+      tg.sendMessage({
+        text: message,
+        chat_id: msg.chat.id
+      });
+    })
   } else if (!msg.text.indexOf('/fredag')) {
     tg.sendMessage({
       text: new Date().getDay() === 5 ? 'IT\'S FRIDAY!' : 'Nope.',
@@ -41,19 +69,53 @@ tg.on('message', function(msg) {
       chat_id: msg.chat.id
     });
   } else if (!msg.text.indexOf('/music')) {
-	var music_list = fs.readFile('./music.json', function(e, data) {
-	  if (e) {
-		console.log(e);
-		return;
-	  }
-	  data = JSON.parse(data);
-	  var r = Math.floor(Math.random() * data.length); // Choosing a random item from the URL list
-	  var video_url = data[r];
-	  tg.sendMessage({
-	    text: video_url,
-	    chat_id: msg.chat.id
-	  });
-	});
+    try {
+      fs.readFile(process.env.HOME + '/.dagsen-bot-music.json', function(err, songs) {
+        if (err) {
+          console.log(err);
+          return;
+        }
+
+        songs = JSON.parse(songs);
+        var r = Math.floor(Math.random() * songs.length); // choose a random item from the URL list
+
+        tg.sendMessage({
+          text: songs[r],
+          chat_id: msg.chat.id
+        });
+      });
+    } catch(e) {
+      console.log('no music list found! add one to ~/.dagsen-bot-music.json');
+    }
+  } else if (!msg.text.indexOf('/addmusic')) {
+    fs.readFile(process.env.HOME + '/.dagsen-bot-music.json', function(err, songs) {
+      if (err) {
+        console.log(err);
+        return;
+      }
+
+      songs = JSON.parse(songs);
+
+      var url = msg.text.split(' ');
+      url.shift();
+      url = url.join(' ');
+
+      if (url.match(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/)) {
+        songs.push(url);
+
+        fs.writeFile(process.env.HOME + '/.dagsen-bot-music.json', JSON.stringify(songs), function(err) {
+          if (err) {
+            console.log(err);
+            return;
+          }
+
+          tg.sendMessage({
+            text: 'Song added!',
+            chat_id: msg.chat.id
+          });
+        });
+      }
+    });
   }
 });
 
