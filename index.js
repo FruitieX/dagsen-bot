@@ -20,12 +20,16 @@ tg.on('message', function(msg) {
   } else if (!msg.text.indexOf('/ute')) {
     console.log('retreiving weather...');
     request('http://outside.aalto.fi/data.txt', function(err, res, body) {
-      outside = JSON.parse(body);
+      try {
+        outside = JSON.parse(body);
 
-      message = 'Temperatur: ' + Number(outside['gent-outside-t']).toFixed(1).replace('.', ',') + ' \xB0C\n';
-      message += 'Luftfuktighet: ' + Number(outside['gent-outside-h']).toFixed(0).replace('.', ',') + ' RH%\n';
-      message += 'Lufttryck: ' + Number(outside['gent-outside-b']).toFixed(0).replace('.', ',') + ' hPa\n';
-      message += 'Illuminans: '  + Number(outside['gent-outside-l']).toFixed(0).replace('.', ',') + ' lx\n';
+        message = 'Temperatur: ' + Number(outside['gent-outside-t']).toFixed(1).replace('.', ',') + ' \xB0C\n';
+        message += 'Luftfuktighet: ' + Number(outside['gent-outside-h']).toFixed(0).replace('.', ',') + ' RH%\n';
+        message += 'Lufttryck: ' + Number(outside['gent-outside-b']).toFixed(0).replace('.', ',') + ' hPa\n';
+        message += 'Illuminans: '  + Number(outside['gent-outside-l']).toFixed(0).replace('.', ',') + ' lx\n';
+      } catch(err) {
+        message = "Vädersensorn är tyvärr offline för tillfället."
+      }
 
       tg.sendMessage({
         text: message,
@@ -35,10 +39,19 @@ tg.on('message', function(msg) {
   } else if(!msg.text.indexOf('/inne')) {
     console.log('retrieving inside weather...');
     request('http://nodemcu.jiihon.com/inne', function(err, res, body) {
-      inside = JSON.parse(body);
+      try {
+        inside = JSON.parse(body);
 
-      message = 'Temperatur: ' + Number(inside['temperature']).toFixed(1).replace('.',',') + ' \xB0C\n';
-      message += 'Luftfuktighet: '  + Number(inside['humidity']).toFixed(0).replace('.', ',') + ' RH%\n';
+        message = 'Temperatur: ' + Number(inside['temperature']).toFixed(1).replace('.',',') + ' \xB0C\n';
+        message += 'Luftfuktighet: '  + Number(inside['humidity']).toFixed(0).replace('.', ',') + ' RH%\n';
+        message += 'Ljust: '
+        if(inside['brightness-raw']<=17) {
+          message += 'nej'; }
+        else {
+          message += 'ja' }
+      } catch(err) {
+        message = "Klimatsensorn är tyvärr offline för tillfället."
+      }
 
       tg.sendMessage({
         text: message,
