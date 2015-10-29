@@ -116,6 +116,11 @@ tg.on('message', function(msg) {
         });
       }
     });
+  } else if (!msg.text.indexOf('/trivia')) {
+    tg.sendMessage({
+      text: 'Spela trivia nu: https://telegram.me/joinchat/AXjh-gBgic0Dnbj_-uzMxg',
+      chat_id: msg.chat.id
+    });
   }
 });
 
