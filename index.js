@@ -38,14 +38,14 @@ tg.on('message', function(msg) {
     });
   } else if(!msg.text.indexOf('/inne')) {
     console.log('retrieving inside weather...');
-    request('http://nodemcu.jiihon.com/inne', function(err, res, body) {
+    request('http://inne.jiihon.com/inne', function(err, res, body) {
       try {
         inside = JSON.parse(body);
 
         message = 'Temperatur: ' + Number(inside['temperature']).toFixed(1).replace('.',',') + ' \xB0C\n';
         message += 'Luftfuktighet: '  + Number(inside['humidity']).toFixed(0).replace('.', ',') + ' RH%\n';
         message += 'Ljust: '
-        if(inside['brightness-raw']<=17) {
+        if(inside['lights-on']==0) {
           message += 'nej'; }
         else {
           message += 'ja' }
