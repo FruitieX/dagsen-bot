@@ -126,11 +126,6 @@ tg.on('message', function(msg) {
       text: 'Spela trivia nu: https://telegram.me/joinchat/AXjh-gBgic0Dnbj_-uzMxg',
       chat_id: msg.chat.id
     });
-  } else if (!msg.text.indexOf('/studerandeorganisationer')) {
-    tg.sendMessage({
-      text: '/studerandeorganisationer',
-      chat_id: msg.chat.id
-    });
   }
 });
 
