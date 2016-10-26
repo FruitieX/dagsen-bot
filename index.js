@@ -126,6 +126,14 @@ tg.on('message', function(msg) {
       text: 'Spela trivia nu: https://telegram.me/joinchat/AXjh-gBgic0Dnbj_-uzMxg',
       chat_id: msg.chat.id
     });
+  } else if (!msg.text.indexOf('/wappen')) {
+    var today = new Date();
+    var wappen = new Date(today.getMonth()>=4 ? today.getFullYear()+1 : today.getFullYear(),4,30); // Months start from 0.
+    var daysLeft = Math.round((wappen-today)/(1000*60*60*24));
+    tg.sendMessage({
+      text: 'Det är ' + daysLeft + ' dagar kvar till wappen (om den ordnas)!',
+      chat_id: msg.chat.id
+    });
   }
 });
 
