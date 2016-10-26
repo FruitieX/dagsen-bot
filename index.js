@@ -134,6 +134,11 @@ tg.on('message', function(msg) {
       text: 'Det är ' + daysLeft + ' dagar kvar till wappen (om den ordnas)!',
       chat_id: msg.chat.id
     });
+  } else if (!msg.text.indexOf('/ylonz')) {
+    tg.sendMessage({
+      text: 'Snart är det YLONZ!',
+      chat_id: msg.chat.id
+    });
   }
 });
 
