@@ -68,11 +68,6 @@ tg.on('message', function(msg) {
       text: new Date().getDay() === 3 ? 'Ja, det är onsdag.' : 'Nope.',
       chat_id: msg.chat.id
     });
-  } else if (!msg.text.indexOf('/bobross')) {
-    tg.sendMessage({
-      text: new Date().getDay() === 1 ? 'Bob Ross day!' : 'Nope.',
-      chat_id: msg.chat.id
-    });
   } else if (!msg.text.indexOf('/music')) {
     try {
       fs.readFile(process.env.HOME + '/.dagsen-bot-music.json', function(err, songs) {
