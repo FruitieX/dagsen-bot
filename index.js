@@ -2,8 +2,8 @@ var fs = require('fs');
 var token = require(process.env.HOME + '/.dagsen-bot-token.js');
 
 var request = require('request');
-var Telegram = require('telegram-bot');
-var tg = new Telegram(token);
+var Telegram = require('node-telegram-bot-api');
+var tg = new Telegram(token, { polling: true });
 
 tg.on('message', function(msg) {
   if (!msg.text) return;
@@ -12,10 +12,7 @@ tg.on('message', function(msg) {
     console.log('retreiving menu...');
 
     request('http://api.teknolog.fi/taffa/sv/today', function(err, res, body) {
-      tg.sendMessage({
-        text: body,
-        chat_id: msg.chat.id
-      });
+      tg.sendMessage(msg.chat.id, body);
     });
   } else if (!msg.text.indexOf('/ute')) {
     console.log('retreiving weather...');
@@ -31,10 +28,7 @@ tg.on('message', function(msg) {
         message = "Vädersensorn är tyvärr offline för tillfället."
       }
 
-      tg.sendMessage({
-        text: message,
-        chat_id: msg.chat.id
-      });
+      tg.sendMessage(msg.chat.id, message);
     });
   } else if(!msg.text.indexOf('/inne')) {
     console.log('retrieving inside weather...');
@@ -53,21 +47,18 @@ tg.on('message', function(msg) {
         message = "Klimatsensorn är tyvärr offline för tillfället."
       }
 
-      tg.sendMessage({
-        text: message,
-        chat_id: msg.chat.id
-      });
+      tg.sendMessage(msg.chat.id, message);
     })
   } else if (!msg.text.indexOf('/fredag')) {
-    tg.sendMessage({
-      text: new Date().getDay() === 5 ? 'IT\'S FRIDAY!' : 'Nope.',
-      chat_id: msg.chat.id
-    });
+    tg.sendMessage(
+      msg.chat.id,
+      new Date().getDay() === 5 ? 'IT\'S FRIDAY!' : 'Nope.'
+    );
   } else if (!msg.text.indexOf('/onsdag') || !msg.text.indexOf('/tulttan')) {
-    tg.sendMessage({
-      text: new Date().getDay() === 3 ? 'Ja, det är onsdag.' : 'Nope.',
-      chat_id: msg.chat.id
-    });
+    tg.sendMessage(
+      msg.chat.id,
+      new Date().getDay() === 3 ? 'Ja, det är onsdag.' : 'Nope.'
+    );
   } else if (!msg.text.indexOf('/music')) {
     try {
       fs.readFile(process.env.HOME + '/.dagsen-bot-music.json', function(err, songs) {
@@ -79,10 +70,7 @@ tg.on('message', function(msg) {
         songs = JSON.parse(songs);
         var r = Math.floor(Math.random() * songs.length); // choose a random item from the URL list
 
-        tg.sendMessage({
-          text: songs[r],
-          chat_id: msg.chat.id
-        });
+        tg.sendMessage(msg.chat.id, songs[r]);
       });
     } catch(e) {
       console.log('no music list found! add one to ~/.dagsen-bot-music.json');
@@ -109,18 +97,15 @@ tg.on('message', function(msg) {
             return;
           }
 
-          tg.sendMessage({
-            text: 'Song added!',
-            chat_id: msg.chat.id
-          });
+          tg.sendMessage(msg.chat.id, 'Song added!');
         });
       }
     });
   } else if (!msg.text.indexOf('/trivia')) {
-    tg.sendMessage({
-      text: 'Spela trivia nu: https://telegram.me/joinchat/AXjh-gBgic0Dnbj_-uzMxg',
-      chat_id: msg.chat.id
-    });
+    tg.sendMessage(
+      msg.chat.id,
+      'Spela trivia nu: https://telegram.me/joinchat/AXjh-gBgic0Dnbj_-uzMxg'
+    );
   } else if (!msg.text.indexOf('/bompa')) {
     tg.sendAudio({
       audio: 'BQADBAADNgAD-uF4AZWtSWQU4TIFAg',
@@ -130,16 +115,14 @@ tg.on('message', function(msg) {
     var today = new Date();
     var wappen = new Date(today.getMonth()>=4 ? today.getFullYear()+1 : today.getFullYear(),3,30); // Months start from 0, so April==3, May==4.
     var daysLeft = Math.round((wappen-today)/(1000*60*60*24));
-    tg.sendMessage({
-      text: 'Det är ' + daysLeft + ' dagar kvar till wappen (om den ordnas)!',
-      chat_id: msg.chat.id
-    });
+    tg.sendMessage(
+      msg.chat.id,
+      'Det är ' + daysLeft + ' dagar kvar till wappen (om den ordnas)!'
+    );
   } else if (!msg.text.indexOf('/ylonz')) {
-    tg.sendMessage({
-      text: 'Snart är det YLONZ!',
-      chat_id: msg.chat.id
-    });
+    tg.sendMessage(
+      msg.chat.id,
+      'Snart är det YLONZ!'
+    );
   }
 });
-
-tg.start();
